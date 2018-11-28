@@ -18,8 +18,8 @@ export function throttle () {
   return function (action: () => void, delay = 300) {
     let curr = +new Date()
     if (curr - last > delay) {
-      // console.log(curr - last, this)
-      action.bind(arguments)
+      // console.log(curr - last, action)
+      action.bind(arguments)();
       last = curr
     }
   }
