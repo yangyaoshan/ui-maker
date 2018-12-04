@@ -1,6 +1,7 @@
 import Vue from "vue";
 import { throttle } from "@/utils/common";
-const _import: (file: string) => void = file => (): Promise<string> => import('@/packages/' + file + '.vue')
+import { Module } from 'vuex';
+const _import: (file: string) => void = file => (): Promise<string> => import(`@/packages/${file}/template.vue`)
 
 Vue.directive("preview", {
   inserted(dom) {
@@ -21,8 +22,12 @@ Vue.directive("preview", {
     document.addEventListener(
       "dragend",
       (el: DragEvent): void => {
-        let elData: DOMStringMap = (<HTMLElement>el.srcElement).dataset;
-        console.log("ondragend === ", _import(<string>elData.itemClass));
+        let elData: DOMStringMap = (<HTMLElement>el.srcElement).dataset,
+          module = require(`@/packages/${elData.itemClass}/template.vue`),
+          component = Vue.extend(module);
+        console.log("ondragend === ", require(`@/packages/${elData.itemClass}/template.vue`));
+        // let MyMsgConstructor = Vue.extend(require('./main.vue'));
+        new component().$mount('#preview-template');
       }
     );
   }
